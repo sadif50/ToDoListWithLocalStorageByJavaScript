@@ -40,6 +40,8 @@ function removeList(e){
         if(confirm("Are you sure to delete data?")){
             let ele = e.target.parentElement;
             ele.remove();
+
+            removeFromLocalStorage(ele);
         }
     }
 }
@@ -51,6 +53,9 @@ function clearAll(e){
     while(allTask.firstChild){
         allTask.removeChild(allTask.firstChild);
     }
+
+    // Remove from local storage
+    localStorage.removeItem('tasks');
 }
 
 // Filter Task 
@@ -90,7 +95,6 @@ function getTask(){
     }else{
         tasks = JSON.parse(localStorage.getItem('tasks'));
     }
-    console.log(tasks)
     tasks.forEach(task => {
         let li = document.createElement('li');
         li.appendChild(document.createTextNode(task + '   '));
@@ -101,4 +105,25 @@ function getTask(){
         link.innerText = 'X';
         li.appendChild(link);
     })
+}
+
+// Delete data from local Storage
+
+function removeFromLocalStorage(taskItem){
+    let tasks;
+    if(localStorage.getItem('tasks') === null){
+        tasks = [];
+    }else{
+        tasks = JSON.parse(localStorage.getItem('tasks'));
+    }
+    let li = taskItem;
+    li.removeChild(li.lastChild);
+    
+    tasks.forEach((task, i)=>{
+        if(li.textContent.trim() === task){
+            tasks.splice(i, 1);
+        }
+    });
+
+    localStorage.setItem('tasks', JSON.stringify(tasks));
 }
